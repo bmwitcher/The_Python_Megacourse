@@ -1,31 +1,37 @@
-def get_todos():
-    with open('todos.txt', 'r') as file:
-        todos = file.readlines()
-    return todos
+def get_todos(filepath):
+    with open(filepath, 'r') as file_local:
+        todos_local = file_local.readlines()
+    return todos_local
+
+
+def write_todos(filepath, todos_arg):
+    with open(filepath, 'w') as file:
+        file.writelines(todos_arg)
+
 
 while True:
     # Designed to get user input and strip space chars from it
-    user_action = input("Type add + todo item | show | edit and a number | complete and a number | erase and a number or exit to leave the program:  ")
+    user_action = input("Type add + todo item | show | edit # | complete # | erase # or exit to leave the program:  ")
     user_action = user_action.strip()
 
     if user_action.startswith("add"):
         todo = user_action[4:] + '\n'
 
-        todos = get_todos()
+        todos = get_todos('todos.txt')
 
-        todos.append(todo + '\n')
+        todos.append(todo)
 
         # file = open('todos.txt', 'w') # if the absolute file path needs to be use please use the r"<path>" option inside the file ()
         # file.writelines(todos)
         # file.close()
 
-        with open('todos.txt', 'w') as file:
-            todos = file.writelines(todos)
+        write_todos('todos.txt', todos)
+
         print(f"Item has been added to the list ")
 
-    elif user_action.startswith("show"): # use either option to print out results to screen
+    elif user_action.startswith("show"):  # use either option to print out results to screen
 
-        todos = get_todos()
+        todos = get_todos('todos.txt')
 
         # new_todos = []
         # for item in todos:
@@ -37,7 +43,7 @@ while True:
         # new_todos = [item.strip('\n') for item in todos]
 
         for index, item in enumerate(todos):
-            item = item.strip('\n') # this line eliminates line 29-30
+            item = item.strip('\n')  # this line eliminates line 29-30
             item = item.title()
             print(f"{index + 1}-{item}")
     elif user_action.startswith("edit"):
@@ -46,16 +52,15 @@ while True:
             number = int(user_action[5:])
             number = number - 1
 
-            todos = get_todos()
+            todos = get_todos('todos.txt')
             print(f" Here are the existing {todos}")
 
             new_todo = input("Enter a new todo item: ")
             todos[number] = new_todo + '\n'
 
-            print(f"Here are the new {todos}".replace('\n',''))
+            print(f"Here are the new {todos}".replace('\n', ''))
 
-            with open('todos.txt', 'w') as file:
-                todos = file.writelines(todos)
+            write_todos('todos.txt', todos)
         except ValueError:
             print("Your command is not valid.")
             continue  # this will loop back to the top and request input
@@ -65,12 +70,11 @@ while True:
             number = int(user_action[6:])
             # number = int(input(" Number of the todo to remove/erase: "))
 
-            todos = get_todos()
+            todos = get_todos('todos.txt')
             print(f"{todos[number - 1]} has been removed from the list")
             todos.pop(number - 1)
 
-            with open('todos.txt', 'w') as file:
-                todos = file.writelines(todos)
+            write_todos('todos.txt', todos)
         except IndexError:
             print("There is no item with that number in the list")
 
@@ -78,14 +82,13 @@ while True:
         try:
             number = int(user_action[9:])
 
-            todos = get_todos()
+            todos = get_todos('todos.txt')
             index = number - 1
-            todos_to_remove = todos[index].strip().upper()
+            todos_to_remove = todos[index].strip('\n').upper()
 
             todos.pop(index)
 
-            with open('todos.txt', 'w') as file:
-                todos = file.writelines(todos)
+            write_todos('todos.txt', todos)
 
             print(f"Todo item {todos_to_remove} was removed from the list")
         except IndexError:
@@ -97,4 +100,3 @@ while True:
         print("Hey you have entered an unfamiliar command!")
 
 print("Operation Complete")
-
